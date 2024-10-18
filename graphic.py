@@ -83,7 +83,7 @@ def show_color_info(event):
         if img_rgb:
             x, y = event.x, event.y
 
-            # Ensure the coordinates are within the image bounds
+            # ensure the coordinates are within the image bounds
             if 0 <= x < img.width and 0 <= y < img.height:
                 r, g, b = img_rgb.getpixel((x, y))
 
@@ -103,30 +103,115 @@ def show_color_info(event):
 
 
 def rgb_to_hex(r: int, g: int, b: int) -> str:
+    def to_hex(val):
+        first_digit = val // 16
+        second_digit = val % 16
+
+        # convert 10-15 to 'A'-'F' and 0-9 to '0'-'9'
+        hex_digits = '0123456789ABCDEF'
+        return hex_digits[first_digit] + hex_digits[second_digit]
+
+    r_hex = to_hex(r)
+    g_hex = to_hex(g)
+    b_hex = to_hex(b)
+
+    # Combine into hex color string
+    hex_color = f"#{r_hex}{g_hex}{b_hex}".upper()
+
+    print(f'#{r:02x}{g:02x}{b:02x}'.upper())
+
+    return hex_color
+
     # need to do it manually, gotta change later
-    return f'#{r:02x}{g:02x}{b:02x}'.upper()
+    # return f'#{r:02x}{g:02x}{b:02x}'.upper()
 
 
 def rgb_to_hsv(r: int, g: int, b: int) -> Tuple[int, int, int]:
-    # need to do it manually, gotta change later
-    norm_r, norm_g, norm_b = r / 255.0, g / 255.0, b / 255.0
-    h, s, v = colorsys.rgb_to_hsv(norm_r, norm_g, norm_b)
+    # normalize the RGB values to range [0, 1]
+    r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
 
-    h = int(h * 360)
+    cMax = max(r_norm, g_norm, b_norm)
+    cMin = min(r_norm, g_norm, b_norm)
+    delta = cMax - cMin
+
+    # calculate saturation (S)
+    s = 0 if cMax == 0 else delta / cMax
+
+    # calculate hue (H)
+    if delta == 0:
+        h = 0
+    else:
+        if cMax == r_norm:
+            h = 60 * (((g_norm - b_norm) / delta) % 6)
+        elif cMax == g_norm:
+            h = 60 * (2 + (b_norm - r_norm) / delta)
+        elif cMax == b_norm:
+            h = 60 * (4 + (r_norm - g_norm) / delta)
+
+    # scale h, s and v
+    h = int(h)
     s = int(s * 100)
-    v = int(v * 100)
+    v = int(cMax * 100)
+    # print(f"hsv:{h, s, v}")
 
+    # norm_a, norm_b, norm_c = r / 255.0, g / 255.0, b / 255.0
+    # h1, s1, v1 = colorsys.rgb_to_hsv(norm_a, norm_b, norm_c)
+
+    # h1 = int(h1 * 360)
+    # s1 = int(s1 * 100)
+    # v1 = int(v1 * 100)
+
+    # return (h1, s1, v1)
     return (h, s, v)
 
 
 def rgb_to_hsl(r: int, g: int, b: int) -> Tuple[int, int, int]:
+    # normalize the RGB values to range [0, 1]
+    r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
+
+    cMax = max(r_norm, g_norm, b_norm)
+    cMin = min(r_norm, g_norm, b_norm)
+
+    delta = cMax - cMin
+    l = (cMax + cMin) / 2
+
+    if cMax == cMin:
+        s = 0
+    elif l <= 0.5:
+        s = delta / (cMax + cMin)
+    elif l > 0.5:
+        s = delta / (2 - cMax - cMin)
+
+    # calculate hue (H)
+    if delta == 0:
+        h = 0
+    else:
+        if cMax == r_norm:
+            h = 60 * (((g_norm - b_norm) / delta) % 6)
+        elif cMax == g_norm:
+            h = 60 * (2 + (b_norm - r_norm) / delta)
+        elif cMax == b_norm:
+            h = 60 * (4 + (r_norm - g_norm) / delta)
+
+    # scale h, s and v
+    h = int(h)
+    s = int(s * 100)
+    l = int(l * 100)
+
+    return (h, s, l)
+
+
+def rgb_to_hsl2(r: int, g: int, b: int) -> Tuple[int, int, int]:
     # need to do it manually, gotta change later
     norm_r, norm_g, norm_b = r / 255.0, g / 255.0, b / 255.0
-    h, s, l = colorsys.rgb_to_hls(norm_r, norm_g, norm_b)
+    h, l, s = colorsys.rgb_to_hls(norm_r, norm_g, norm_b)
 
     h = int(h * 360)
     s = int(s * 100)
     l = int(l * 100)
+
+    a, b, c = rgb_to_hsl2(r, g, b)
+    print(f"hsl:{a, b, c}")
 
     return (h, s, l)
 
