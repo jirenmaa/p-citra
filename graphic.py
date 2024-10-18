@@ -103,22 +103,20 @@ def show_color_info(event):
 
 
 def rgb_to_hex(r: int, g: int, b: int) -> str:
-    def to_hex(val):
-        first_digit = val // 16
-        second_digit = val % 16
+    def to_hex(val: int) -> str:
+        first_digit: int = val // 16
+        second_digit: int = val % 16
 
         # convert 10-15 to 'A'-'F' and 0-9 to '0'-'9'
         hex_digits = '0123456789ABCDEF'
         return hex_digits[first_digit] + hex_digits[second_digit]
 
-    r_hex = to_hex(r)
-    g_hex = to_hex(g)
-    b_hex = to_hex(b)
+    r_hex: str = to_hex(r)
+    g_hex: str = to_hex(g)
+    b_hex: str = to_hex(b)
 
     # combine into hex color string
     hex_color = f"#{r_hex}{g_hex}{b_hex}".upper()
-
-    print(f'#{r:02x}{g:02x}{b:02x}'.upper())
 
     return hex_color
 
@@ -127,27 +125,29 @@ def rgb_to_hsv(r: int, g: int, b: int) -> Tuple[int, int, int]:
     # normalize the RGB values to range [0, 1]
     r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
 
-    cMax = max(r_norm, g_norm, b_norm)
-    cMin = min(r_norm, g_norm, b_norm)
-    delta = cMax - cMin
+    cMax: float = max(r_norm, g_norm, b_norm)
+    cMin: float = min(r_norm, g_norm, b_norm)
+    delta: float = cMax - cMin
 
     # calculate saturation (S)
-    s = 0 if cMax == 0 else delta / cMax
+    sat: float = 0.0 if cMax == 0.0 else delta / cMax
+
+    s: int = 0
+    h: int = 0
 
     # calculate hue (H)
-    if delta == 0:
+    if delta == 0.0:
         h = 0
     else:
         if cMax == r_norm:
-            h = 60 * (((g_norm - b_norm) / delta) % 6)
+            h = int(60 * (((g_norm - b_norm) / delta) % 6))
         elif cMax == g_norm:
-            h = 60 * (2 + (b_norm - r_norm) / delta)
+            h = int(60 * (2 + (b_norm - r_norm) / delta))
         elif cMax == b_norm:
-            h = 60 * (4 + (r_norm - g_norm) / delta)
+            h = int(60 * (4 + (r_norm - g_norm) / delta))
 
-    # scale h, s and v
-    h = int(h)
-    s = int(s * 100)
+    # scale saturation and luminance
+    s = int(sat * 100)
     v = int(cMax * 100)
 
     return (h, s, v)
@@ -157,36 +157,43 @@ def rgb_to_hsl(r: int, g: int, b: int) -> Tuple[int, int, int]:
     # normalize the RGB values to range [0, 1]
     r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
 
-    cMax = max(r_norm, g_norm, b_norm)
-    cMin = min(r_norm, g_norm, b_norm)
+    cMax: float = max(r_norm, g_norm, b_norm)
+    cMin: float = min(r_norm, g_norm, b_norm)
 
-    delta = cMax - cMin
-    l = (cMax + cMin) / 2
+    delta: float = cMax - cMin
+    lum: float = (cMax + cMin) / 2  # luminance (L)
 
+    h: int = 0
+    l: int = 0
+    s: int = 0
+
+    sat: float = 0.0
+
+    # calculate saturation (S)
     if cMax == cMin:
-        s = 0
-    elif l <= 0.5:
-        s = delta / (cMax + cMin)
-    elif l > 0.5:
-        s = delta / (2 - cMax - cMin)
+        sat = 0
+    elif lum <= 0.5:
+        sat = delta / (cMax + cMin)
+    elif lum > 0.5:
+        sat = delta / (2 - cMax - cMin)
 
     # calculate hue (H)
     if delta == 0:
         h = 0
     else:
         if cMax == r_norm:
-            h = 60 * (((g_norm - b_norm) / delta) % 6)
+            h = int(60 * (((g_norm - b_norm) / delta) % 6))
         elif cMax == g_norm:
-            h = 60 * (2 + (b_norm - r_norm) / delta)
+            h = int(60 * (2 + (b_norm - r_norm) / delta))
         elif cMax == b_norm:
-            h = 60 * (4 + (r_norm - g_norm) / delta)
+            h = int(60 * (4 + (r_norm - g_norm) / delta))
 
-    # scale h, s and l
-    h = int(h)
-    s = int(s * 100)
-    l = int(l * 100)
+    # scale saturation and luminance
+    s = int(sat * 100)
+    l = int(lum * 100)
 
     return (h, s, l)
+
 
 root = tk.Tk()
 root.title("Coursework")
