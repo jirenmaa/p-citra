@@ -115,15 +115,12 @@ def rgb_to_hex(r: int, g: int, b: int) -> str:
     g_hex = to_hex(g)
     b_hex = to_hex(b)
 
-    # Combine into hex color string
+    # combine into hex color string
     hex_color = f"#{r_hex}{g_hex}{b_hex}".upper()
 
     print(f'#{r:02x}{g:02x}{b:02x}'.upper())
 
     return hex_color
-
-    # need to do it manually, gotta change later
-    # return f'#{r:02x}{g:02x}{b:02x}'.upper()
 
 
 def rgb_to_hsv(r: int, g: int, b: int) -> Tuple[int, int, int]:
@@ -152,16 +149,7 @@ def rgb_to_hsv(r: int, g: int, b: int) -> Tuple[int, int, int]:
     h = int(h)
     s = int(s * 100)
     v = int(cMax * 100)
-    # print(f"hsv:{h, s, v}")
 
-    # norm_a, norm_b, norm_c = r / 255.0, g / 255.0, b / 255.0
-    # h1, s1, v1 = colorsys.rgb_to_hsv(norm_a, norm_b, norm_c)
-
-    # h1 = int(h1 * 360)
-    # s1 = int(s1 * 100)
-    # v1 = int(v1 * 100)
-
-    # return (h1, s1, v1)
     return (h, s, v)
 
 
@@ -193,28 +181,12 @@ def rgb_to_hsl(r: int, g: int, b: int) -> Tuple[int, int, int]:
         elif cMax == b_norm:
             h = 60 * (4 + (r_norm - g_norm) / delta)
 
-    # scale h, s and v
+    # scale h, s and l
     h = int(h)
     s = int(s * 100)
     l = int(l * 100)
 
     return (h, s, l)
-
-
-def rgb_to_hsl2(r: int, g: int, b: int) -> Tuple[int, int, int]:
-    # need to do it manually, gotta change later
-    norm_r, norm_g, norm_b = r / 255.0, g / 255.0, b / 255.0
-    h, l, s = colorsys.rgb_to_hls(norm_r, norm_g, norm_b)
-
-    h = int(h * 360)
-    s = int(s * 100)
-    l = int(l * 100)
-
-    a, b, c = rgb_to_hsl2(r, g, b)
-    print(f"hsl:{a, b, c}")
-
-    return (h, s, l)
-
 
 root = tk.Tk()
 root.title("Coursework")
